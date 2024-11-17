@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-service
+  labels:
+    app: reporting-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: reporting-service
+  template:
+    metadata:
+      labels:
+        app: reporting-service
+    spec:
+      containers:
+      - name: reporting-service
+        image: <YOUR_DOCKER_IMAGE>
+        ports:
+        - containerPort: 8080
+        env:
+        - name: CLICKHOUSE_HOST
+          value: "<CLICKHOUSE_PUBLIC_IP>"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-service
+spec:
+  selector:
+    app: reporting-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
